@@ -1,0 +1,112 @@
+{
+  "type": "Layout",
+  "id": "Layout-xxxx",
+  "props": {
+    "style": {
+      "width": "1280px;",
+      "background": "#fff"
+    }
+  },
+  "children": [
+    {
+      "order": 1,
+      "type": "Row",
+      "id": "Row-xxxx",
+      "props": {
+        "style": {
+          "background": "#eee",
+          "min-height": "400px"
+        },
+        "align": "middle",
+        "justify": "center"
+      },
+      "children": [
+        {
+          "order": 1,
+          "type": "Col",
+          "id": "Col-xxxx",
+          "props": {
+            "xs": 24,
+            "lg": 6
+          },
+          "children": [
+            {
+              "type": "Text",
+              "id": "Comp-xxxx",
+              "content": "Hello World!"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "type": "Col",
+          "id": "Col-xxxx",
+          "props": {
+            "xs": 24,
+            "lg": 6
+          },
+          "children": [
+            {
+              "type": "Card",
+              "id": "Comp-xxxx",
+              "props": {
+                "title": "Card title",
+                "bordered": "false"
+              },
+              "children": [
+                {
+                  "type": "Line",
+                  "id": "Line-xxxx",
+                  "props": {
+                    "data": [
+                      { "year": "1991", "value": 3 },
+                      { "year": "1992", "value": 4 },
+                      { "year": "1993", "value": 3.5 },
+                      { "year": "1994", "value": 5 },
+                      { "year": "1995", "value": 4.9 },
+                      { "year": "1996", "value": 6 },
+                      { "year": "1997", "value": 7 },
+                      { "year": "1998", "value": 9 },
+                      { "year": "1999", "value": 13 }
+                    ],
+                    "height": 400,
+                    "xField": "year",
+                    "yField": "value",
+                    "point": {
+                      "size": 5,
+                      "shape": "diamond"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "type": "Row",
+      "id": "Row-xxxx",
+      "props": {
+        "style": {
+          "min-height": "400px"
+        },
+        "align": "middle",
+        "justify": "center"
+      },
+      "children": [
+        {
+          "type": "Button",
+          "id": "Comp-xxxx",
+          "props": {
+            "style": {
+              "background": "#eee"
+            }
+          },
+          "content": "Click button"
+        }
+      ]
+    }
+  ]
+}

@@ -1,40 +1,24 @@
 import { useState, useRef } from "react";
 import "./App.less";
 
-import Renderer from "./Renderer";
+import Dashboard from "./Dashboard";
+import Editor from "./Editor";
 
-import data from "./data.json";
-import { Button } from "antd";
+import data from "./data.js";
 
 const App = () => {
   console.log(data);
-  const [mockDate, setMockData] = useState(data);
-  const inputRef = useRef(null);
+  const [mockData, setMockData] = useState(data);
 
   return (
     <div style={{ display: "flex" }}>
-      <div>
+      {/* <div style={{ flexBasis: "50%" }}>
         <h3>Data edit</h3>
-        <textarea
-          ref={inputRef}
-          defaultValue={JSON.stringify(mockDate, undefined, 4)}
-          id=""
-          cols={40}
-          rows={30}
-          style={{ width: "100%" }}
-        ></textarea>
-        <Button
-          onClick={() => {
-            if (inputRef.current) {
-              console.log(inputRef.current);
-              setMockData(JSON.parse(inputRef.current.value));
-            }
-          }}
-        >
-          Apply
-        </Button>
+        <Editor code={mockData} updateCode={setMockData} />
+      </div> */}
+      <div className="App" style={{ flexBasis: "100%" }}>
+        <Dashboard data={mockData} />
       </div>
-      <div className="App">{Renderer(mockDate)}</div>
     </div>
   );
 };

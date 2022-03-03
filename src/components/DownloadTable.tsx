@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { MouseEventHandler, useState } from "react";
 import { Menu, Dropdown } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
 import renders from "../Render";
 import Renderer from "../Renderer";
 
-const menu = ({ onDownload }) => (
-  <Menu>
-    <Menu.Item onClick={onDownload}>Donwload csv</Menu.Item>
-  </Menu>
-);
+const menu: React.FC<{
+  onDownload: MouseEventHandler<HTMLDivElement> | undefined;
+}> = ({ onDownload }) => {
+  return (
+    <Menu>
+      <Menu.Item>
+        <div onClick={onDownload}>Donwload csv</div>
+      </Menu.Item>
+    </Menu>
+  );
+};
 
 const DownloadTable: React.FC<{
   config: {

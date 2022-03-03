@@ -527,7 +527,7 @@ const data = {
                   type: "Card",
                   id: "Comp-xxxx",
                   props: {
-                    title: "Card Title",
+                    title: "Card Title ss",
                     style: {
                       textAlign: "left",
                       height: "100%",

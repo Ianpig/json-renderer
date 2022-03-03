@@ -10,17 +10,19 @@ const data = {
     {
       type: "Layout",
       id: "Layout-xxxx",
-      props: {
-        style: {
-          padding: "48px 24px",
-          margin: "0 auto",
-        },
+      media: {
         xs: "480px",
         sm: "576px",
         md: "768px",
         lg: "992px",
         xl: "1200px",
         xxl: "1600px",
+      },
+      props: {
+        style: {
+          padding: "48px 24px",
+          margin: "0 auto",
+        },
       },
       children: [
         {
@@ -300,7 +302,7 @@ const data = {
                   id: "Comp-xxxx",
                   isDownload: true,
                   props: {
-                    title: "Card Title",
+                    title: "Customer Segment",
                     style: {
                       textAlign: "left",
                     },
@@ -527,7 +529,7 @@ const data = {
                   type: "Card",
                   id: "Comp-xxxx",
                   props: {
-                    title: "Card Title ss",
+                    title: "AI Forecasts",
                     style: {
                       textAlign: "left",
                       height: "100%",
@@ -545,22 +547,70 @@ const data = {
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "Customers",
+                          content: "🔮 In the next 30 days, we predict…",
                         },
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "1203,4922",
+                          content: "Loyalty Gain",
+                        },
+                        {
+                          type: "div",
+                          id: "Comp-xxxx",
+                          children: [
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              variable: {
+                                client: 40,
+                                revenue: `2,338`,
+                              },
+                              content: ({ client, revenue }) =>
+                                `An increase in ${client} clients becoming Loyal customers, with an estimated revenue gain of $${revenue} (`,
+                            },
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              content: "🔒 download list",
+                            },
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              content:
+                                " to run targetted marketing campaigns to increase revenue gain!)",
+                            },
+                          ],
                         },
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "Compared to last month",
+                          content: "Sleeper Alert",
                         },
                         {
-                          type: "Typography.Text",
+                          type: "div",
                           id: "Comp-xxxx",
-                          content: "+2.39%",
+                          children: [
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              variable: {
+                                client: 430,
+                                revenue: `234,338`,
+                              },
+                              content: ({ client, revenue }) =>
+                                `An increase in ${client} clients becoming Sleepers, with an estimated revenue loss of $${revenue} (`,
+                            },
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              content: "🔒 download list",
+                            },
+                            {
+                              type: "Typography.Text",
+                              id: "Comp-xxxx",
+                              content: " to prevent further losses!)",
+                            },
+                          ],
                         },
                       ],
                     },
@@ -697,7 +747,7 @@ const data = {
                   type: "Card",
                   id: "Comp-xxxx",
                   props: {
-                    title: "Card title",
+                    title: "Product Insights",
                     style: {
                       height: "100%",
                       textAlign: "left",
@@ -715,22 +765,23 @@ const data = {
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "Customers",
+                          content:
+                            "I am some text that explains the chart below",
                         },
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "1203,4922",
+                          content: "Catgeory 1: I am some description",
                         },
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "Compared to last month",
+                          content: "Catgeory 2: I am some description",
                         },
                         {
                           type: "Typography.Text",
                           id: "Comp-xxxx",
-                          content: "+2.39%",
+                          content: "Catgeory 3: I am some description",
                         },
                       ],
                     },

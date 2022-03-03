@@ -2,6 +2,7 @@ import React from "react";
 // import { useDrag } from "react-dnd";
 import renders from "./Render";
 import DownloadTable from "./components/DownloadTable";
+import StyledLayout from "./components/StyledLayout";
 
 const Renderer = (config: {
   type: any;
@@ -11,13 +12,17 @@ const Renderer = (config: {
   content?: any;
   isColumn?: boolean;
   isDownload?: boolean;
+  variable?: any;
+  media?: any;
 }) => {
   let props = config.props;
-  let appendComps = [];
   if (config.isDownload) {
     if (config.type === "Card") {
       return <DownloadTable config={config} />;
     }
+  }
+  if (config.type === "Layout" && config.media) {
+    return <StyledLayout config={config} />;
   }
   let injectProps = {};
   if (config.isColumn) {
@@ -82,6 +87,7 @@ const Renderer = (config: {
         return { ...item, isColumn: true };
       });
     }
+    let variable = config.variable || {};
     return React.createElement(
       RenderComp,
       {
@@ -94,17 +100,15 @@ const Renderer = (config: {
       },
       config.content
         ? typeof config.content === "function"
-          ? config.content(config)
+          ? config.content({ ...config, ...variable })
           : config.content
-        : config.children && [
-            ...config.children
+        : config.children &&
+            config.children
               .sort(
                 (a: { order: number }, b: { order: number }) =>
                   a.order - b.order
               )
-              .map((c: any) => <Renderer {...injectProps} {...c} />),
-            ...appendComps,
-          ]
+              .map((c: any) => <Renderer {...injectProps} {...c} />)
     );
   }
   return null;

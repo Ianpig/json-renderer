@@ -14,15 +14,17 @@ const Renderer = (config: {
   isDownload?: boolean;
   variable?: any;
   media?: any;
+  onSelectEdit: any;
 }) => {
+  const { onSelectEdit } = config;
   let props = config.props;
   if (config.isDownload) {
     if (config.type === "Card") {
-      return <DownloadTable config={config} />;
+      return <DownloadTable config={config} onSelectEdit={onSelectEdit} />;
     }
   }
   if (config.type === "Layout" && config.media) {
-    return <StyledLayout config={config} />;
+    return <StyledLayout config={config} onSelectEdit={onSelectEdit} />;
   }
   let injectProps = {};
   if (config.isColumn) {
@@ -53,10 +55,11 @@ const Renderer = (config: {
       RenderComp,
       {
         ...config.props,
-        key: new Date().getTime(),
+        key: config.id,
         onClick: (e) => {
           e.stopPropagation();
           console.log(config);
+          onSelectEdit(config);
         },
         // ref: drag,
       },
@@ -66,12 +69,13 @@ const Renderer = (config: {
             .sort(
               (a: { order: number }, b: { order: number }) => a.order - b.order
             )
-            .map((c: any) => <Renderer {...injectProps} {...c} />))
+            .map((c: any) => (
+              <Renderer {...injectProps} {...c} onSelectEdit={onSelectEdit} />
+            )))
     );
   }
   if (typeof RenderComp !== "undefined") {
     if (config.type === "Table") {
-      console.log(config.props.columns);
       config.props.columns = [...config.props.columns].map((item) => {
         const { render, ...rest } = item;
         if (typeof render === "function") {
@@ -81,7 +85,13 @@ const Renderer = (config: {
           return {
             ...rest,
             render: (_, record) => (
-              <Renderer isColumn {...injectProps} {...record} {...render} />
+              <Renderer
+                isColumn
+                {...injectProps}
+                {...record}
+                {...render}
+                onSelectEdit={onSelectEdit}
+              />
             ),
           };
         }
@@ -95,6 +105,7 @@ const Renderer = (config: {
         onClick={(e: { stopPropagation: () => void }) => {
           e.stopPropagation();
           console.log(config);
+          onSelectEdit(config);
         }}
       >
         {config.content
@@ -107,7 +118,9 @@ const Renderer = (config: {
                 (a: { order: number }, b: { order: number }) =>
                   a.order - b.order
               )
-              .map((c: any) => <Renderer {...injectProps} {...c} />)}
+              .map((c: any) => (
+                <Renderer {...injectProps} {...c} onSelectEdit={onSelectEdit} />
+              ))}
       </RenderComp>
     );
   }

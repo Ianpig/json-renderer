@@ -13,14 +13,15 @@ const Dashboard: React.FC<{
     children: any;
     content?: any;
   };
-}> = ({ data }) => {
+  onSelectEdit: any;
+}> = ({ data, onSelectEdit }) => {
   const count = useRef(0);
   useEffect(() => {
     console.log(count.current);
   }, []);
   return (
     <DndProvider backend={HTML5Backend}>
-      <Renderer {...data} />
+      <Renderer {...data} onSelectEdit={onSelectEdit} />
       {/* <Dropper /> */}
     </DndProvider>
   );

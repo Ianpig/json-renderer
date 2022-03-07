@@ -15,7 +15,8 @@ const StyledLayout: React.FC<{
     isDownload?: boolean;
     media?: any;
   };
-}> = ({ config }) => {
+  onSelectEdit: any;
+}> = ({ config, onSelectEdit }) => {
   const RenderComp = renders(config.type);
   const media = config.media || {};
 
@@ -70,7 +71,7 @@ const StyledLayout: React.FC<{
     config.children &&
       config.children
         .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
-        .map((c: any) => <Renderer {...c} />)
+        .map((c: any) => <Renderer {...c} onSelectEdit={onSelectEdit} />)
   );
 };
 

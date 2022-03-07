@@ -28,7 +28,8 @@ const DownloadTable: React.FC<{
     isDownload?: boolean;
   };
   count: number;
-}> = ({ config, count }) => {
+  onSelectEdit;
+}> = ({ config, count, onSelectEdit }) => {
   const newCount = count + 1;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const RenderComp = renders(config.type);
@@ -74,7 +75,7 @@ const DownloadTable: React.FC<{
       {...config.props}
       onClick={(e: { stopPropagation: () => void }) => {
         e.stopPropagation();
-        console.log(config);
+        onSelectEdit(config);
       }}
       extra={
         <Dropdown overlay={menu({ onDownload: handleDownload })}>
@@ -89,11 +90,14 @@ const DownloadTable: React.FC<{
           ? config.content({ ...config })
           : config.content
         : config.children &&
-          config.children.slice()
+          config.children
+            .slice()
             .sort(
               (a: { order: number }, b: { order: number }) => a.order - b.order
             )
-            .map((c: any) => <Renderer {...c} count={newCount} />)}
+            .map((c: any) => (
+              <Renderer {...c} count={newCount} onSelectEdit={onSelectEdit} />
+            ))}
     </RenderComp>
   );
 };

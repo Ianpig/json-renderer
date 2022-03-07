@@ -27,8 +27,9 @@ const DownloadTable: React.FC<{
     isColumn?: boolean;
     isDownload?: boolean;
   };
-}> = ({ config }) => {
-  console.log(config);
+  count: number;
+}> = ({ config, count }) => {
+  const newCount = count + 1;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const RenderComp = renders(config.type);
 
@@ -68,27 +69,32 @@ const DownloadTable: React.FC<{
   }
   findChildren(config);
 
-  return React.createElement(
-    RenderComp,
-    {
-      key: new Date().getTime(),
-      onClick: (e) => {
+  return (
+    <RenderComp
+      {...config.props}
+      onClick={(e: { stopPropagation: () => void }) => {
         e.stopPropagation();
         console.log(config);
-      },
-      extra: (
+      }}
+      extra={
         <Dropdown overlay={menu({ onDownload: handleDownload })}>
           <a className="ant-dropdown-link" onClick={handleDownload}>
             Download <DownOutlined />
           </a>
         </Dropdown>
-      ),
-      ...config.props,
-    },
-    config.children &&
-      config.children
-        .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
-        .map((c: any) => <Renderer {...c} />)
+      }
+    >
+      {config.content
+        ? typeof config.content === "function"
+          ? config.content({ ...config })
+          : config.content
+        : config.children &&
+          config.children.slice()
+            .sort(
+              (a: { order: number }, b: { order: number }) => a.order - b.order
+            )
+            .map((c: any) => <Renderer {...c} count={newCount} />)}
+    </RenderComp>
   );
 };
 

@@ -71,7 +71,8 @@ const Renderer = (config: {
   }
   if (typeof RenderComp !== "undefined") {
     if (config.type === "Table") {
-      config.props.columns = config.props.columns.map((item) => {
+      console.log(config.props.columns);
+      config.props.columns = [...config.props.columns].map((item) => {
         const { render, ...rest } = item;
         if (typeof render === "function") {
           return { ...rest, render };
@@ -88,27 +89,26 @@ const Renderer = (config: {
       });
     }
     let variable = config.variable || {};
-    return React.createElement(
-      RenderComp,
-      {
-        ...props,
-        key: new Date().getTime(),
-        onClick: (e) => {
+    return (
+      <RenderComp
+        {...props}
+        onClick={(e: { stopPropagation: () => void }) => {
           e.stopPropagation();
           console.log(config);
-        },
-      },
-      config.content
-        ? typeof config.content === "function"
-          ? config.content({ ...config, ...variable })
-          : config.content
-        : config.children &&
+        }}
+      >
+        {config.content
+          ? typeof config.content === "function"
+            ? config.content({ ...config, ...variable })
+            : config.content
+          : config.children &&
             config.children
               .sort(
                 (a: { order: number }, b: { order: number }) =>
                   a.order - b.order
               )
-              .map((c: any) => <Renderer {...injectProps} {...c} />)
+              .map((c: any) => <Renderer {...injectProps} {...c} />)}
+      </RenderComp>
     );
   }
   return null;

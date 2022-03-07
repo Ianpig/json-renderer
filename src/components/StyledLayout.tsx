@@ -21,27 +21,46 @@ const StyledLayout: React.FC<{
 
   return React.createElement(
     styled(RenderComp)`
-      @media (max-width: 576px) {
+      @container (max-width: 576px) {
         width: ${media.xs};
       }
-      @media (min-width: 576px) {
+      @container (min-width: 576px) {
         width: ${media.sm};
       }
-      @media (min-width: 768px) {
+      @container (min-width: 768px) {
         width: ${media.md};
       }
-      @media (min-width: 992px) {
+      @container (min-width: 992px) {
         width: ${media.lg};
       }
-      @media (min-width: 1200px) {
+      @container (min-width: 1200px) {
         width: ${media.xl};
       }
-      @media (min-width: 1600px) {
+      @container (min-width: 1600px) {
         width: ${media.xxl};
       }
+      // container
+      // @media (max-width: 576px) {
+      //   width: ${media.xs};
+      // }
+      // @media (min-width: 576px) {
+      //   width: ${media.sm};
+      // }
+      // @media (min-width: 768px) {
+      //   width: ${media.md};
+      // }
+      // @media (min-width: 992px) {
+      //   width: ${media.lg};
+      // }
+      // @media (min-width: 1200px) {
+      //   width: ${media.xl};
+      // }
+      // @media (min-width: 1600px) {
+      //   width: ${media.xxl};
+      // }
     `,
     {
-      key: new Date().getTime(),
+      key: config.id,
       onClick: (e) => {
         e.stopPropagation();
         console.log(config);

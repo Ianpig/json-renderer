@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import SplitPane, { Pane } from "react-split-pane";
 import data from "./data";
 import "./App.less";
@@ -6,6 +6,7 @@ import { CloseOutlined } from "@ant-design/icons";
 
 import Dashboard from "./Dashboard";
 import Editor from "./Editor";
+import JSONHandler from "./JSONHandler";
 
 const buildLinklist = (mock, children, rowData) => {
   if (children && Array.isArray(children)) {
@@ -23,11 +24,12 @@ const buildLinklist = (mock, children, rowData) => {
 };
 
 const App = () => {
-  const [selectEdit, setSelectEdit] = useState("");
   const [code, setCode] = useState(data);
+
   let { children, ...restProps } =
     (code && code.find((item) => item.root === true)) || {};
   const buildTree = buildLinklist(restProps, children, code);
+  const [selectEdit, setSelectEdit] = useState("");
 
   const findItemUpdate = (
     mockCode: any[],
@@ -54,39 +56,50 @@ const App = () => {
     }
   };
 
-  const handleSetEditUpdate = (value, callback = () => {}) => {
-    setSelectEdit(value);
-    const mockCode = [...code];
-    findItemUpdate(mockCode, value);
-    recursiveUpdateDown(mockCode, value);
-    callback(mockCode);
-  };
+  useEffect(() => {
+    setSelectEdit(buildTree);
+  }, []);
 
+  const handleSetEditUpdate = useCallback(
+    (value) => {
+      if (selectEdit) {
+        setSelectEdit(value);
+      }
+
+      setCode((prevCode) => {
+        const mockCode = [...prevCode];
+        findItemUpdate(mockCode, value);
+        recursiveUpdateDown(mockCode, value);
+        return mockCode;
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  // const handleSetEditUpdate = (value, callback = () => {}) => {
+  //   console.log(value);
+  //   if (selectEdit) {
+  //     setSelectEdit(value);
+  //   }
+  //   const mockCode = [...code];
+  //   findItemUpdate(mockCode, value);
+  //   recursiveUpdateDown(mockCode, value);
+  //   console.log(mockCode);
+  //   setCode(mockCode);
+  // };
+  console.log("code", code);
   return (
     <SplitPane split="vertical" minSize={`50%`} defaultSize={`50%`}>
       <Pane initialSize="40%" minSize="10%">
         <div>
           <h3>Data edit</h3>
-          {selectEdit?.id && (
-            <>
-              You are in selected edit mode
-              <CloseOutlined onClick={() => setSelectEdit("")} />
-            </>
-          )}
-        </div>
-        {selectEdit ? (
-          <Editor
+          <JSONHandler
             key={selectEdit?.id}
             code={selectEdit}
-            updateCode={(val) => handleSetEditUpdate(val, setCode)}
+            updateCode={handleSetEditUpdate}
           />
-        ) : (
-          <Editor
-            key={buildTree?.id}
-            code={buildTree}
-            updateCode={(val) => handleSetEditUpdate(val, setCode)}
-          />
-        )}
+        </div>
       </Pane>
       <Pane initialSize="60%" minSize="10%">
         <div className="App">

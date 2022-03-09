@@ -64,7 +64,7 @@ const StyledLayout: React.FC<{
       key: config.id,
       onClick: (e) => {
         e.stopPropagation();
-        console.log(config);
+        onSelectEdit(config);
       },
       ...config.props,
     },

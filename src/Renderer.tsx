@@ -20,7 +20,9 @@ const Renderer = (config: {
   let props = config.props;
   if (config.isDownload) {
     if (config.type === "Card") {
-      return <DownloadTable config={config} onSelectEdit={onSelectEdit} />;
+      return (
+        <DownloadTable config={config} onSelectEdit={onSelectEdit} />
+      );
     }
   }
   if (config.type === "Layout" && config.media) {
@@ -58,7 +60,6 @@ const Renderer = (config: {
         key: config.id,
         onClick: (e) => {
           e.stopPropagation();
-          console.log(config);
           onSelectEdit(config);
         },
         // ref: drag,
@@ -84,7 +85,21 @@ const Renderer = (config: {
         if (typeof render === "object") {
           return {
             ...rest,
-            render: (_, record) => (
+            render: (
+              _: any,
+              record: JSX.IntrinsicAttributes & {
+                type: any;
+                id?: string | undefined;
+                props: any;
+                children: any;
+                content?: any;
+                isColumn?: boolean | undefined;
+                isDownload?: boolean | undefined;
+                variable?: any;
+                media?: any;
+                onSelectEdit: any;
+              }
+            ) => (
               <Renderer
                 isColumn
                 {...injectProps}
@@ -104,7 +119,6 @@ const Renderer = (config: {
         {...props}
         onClick={(e: { stopPropagation: () => void }) => {
           e.stopPropagation();
-          console.log(config);
           onSelectEdit(config);
         }}
       >

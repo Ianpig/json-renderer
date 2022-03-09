@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -15,10 +15,6 @@ const Dashboard: React.FC<{
   };
   onSelectEdit: any;
 }> = ({ data, onSelectEdit }) => {
-  const count = useRef(0);
-  useEffect(() => {
-    console.log(count.current);
-  }, []);
   return (
     <DndProvider backend={HTML5Backend}>
       <Renderer {...data} onSelectEdit={onSelectEdit} />

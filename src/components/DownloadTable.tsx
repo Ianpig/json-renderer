@@ -27,10 +27,8 @@ const DownloadTable: React.FC<{
     isColumn?: boolean;
     isDownload?: boolean;
   };
-  count: number;
-  onSelectEdit;
-}> = ({ config, count, onSelectEdit }) => {
-  const newCount = count + 1;
+  onSelectEdit: any;
+}> = ({ config, onSelectEdit }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const RenderComp = renders(config.type);
 
@@ -95,9 +93,7 @@ const DownloadTable: React.FC<{
             .sort(
               (a: { order: number }, b: { order: number }) => a.order - b.order
             )
-            .map((c: any) => (
-              <Renderer {...c} count={newCount} onSelectEdit={onSelectEdit} />
-            ))}
+            .map((c: any) => <Renderer {...c} onSelectEdit={onSelectEdit} />)}
     </RenderComp>
   );
 };

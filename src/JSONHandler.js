@@ -1,89 +1,62 @@
-import React, { Component } from 'react';
+import React, { useState } from "react";
 
-import JSONEditorReact from './JSONEditorReact';
+import JSONEditorReact from "./components/JSONEditor/JSONEditor";
+import _ from "lodash";
 
 const schema = {
-  title: 'Example Schema',
-  type: 'object',
+  title: "Example Schema",
+  type: "object",
   properties: {
     array: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'number'
-      }
+        type: "number",
+      },
     },
     boolean: {
-      type: 'boolean'
+      type: "boolean",
     },
     number: {
-      type: 'number'
-    }
+      type: "number",
+    },
   },
-  required: ['array', 'string', 'boolean']
+  required: ["array", "string", "boolean"],
 };
 
-const json = {
-  'array': [1, 2, 3],
-  'boolean': true,
-  'null': null,
-  'number': 'four',
-  'object': {'a': 'b', 'c': 'd'},
-  'string': 'Hello World'
-};
+const modes = ["tree", "form", "view", "code", "text"];
 
-const modes = ['tree', 'form', 'view', 'code', 'text'];
+function JSONHandler({ code, updateCode }) {
+  const [mode, setMode] = useState("tree");
+  const [text, setText] = useState(JSON.stringify(code, null, 2));
 
-class JSONHandler extends Component {
-  state = {
-    schema,
-    text: JSON.stringify(json, null, 2),
-    mode: 'tree'
+  const onModeChange = (mode) => {
+    setMode(mode);
   };
 
-  render() {
-    return (
-      <div className="app">
-        <h1>JSONEditor React advanced demo</h1>
-        <div className="contents">
-          <div className="mode">
-            mode: <select value={this.state.mode} onChange={this.onModeChangeSelect}>
-              {
-                modes.map(mode => <option key={mode} value={mode}>{mode}</option>)
-              }
-            </select>
-          </div>
-          <JSONEditorReact
-              schema={this.state.schema}
-              text={this.state.text}
-              mode={this.state.mode}
-              modes={modes}
-              indentation={4}
-              onChangeText={this.onChangeText}
-              onModeChange={this.onModeChange}
-          />
-          <div className="code">
-            <pre>
-              <code>
-                {this.state.text}
-              </code>
-            </pre>
-          </div>
-        </div>
+  console.log("RRRR");
+
+  const handleUpdateText = (code) => {
+    _.debounce(updateCode(JSON.parse(code)), 500);
+
+    setText(code);
+  };
+
+  return (
+    <>
+      <h1>JSONEditor React advanced demo</h1>
+      <div style={{ height: `calc(100Vh - 110px)` }}>
+        <JSONEditorReact
+          schema={schema}
+          text={text}
+          mode={mode}
+          modes={modes}
+          indentation={4}
+          onChangeText={handleUpdateText}
+          onModeChange={onModeChange}
+        />
       </div>
-    );
-  }
-
-  onChangeText = (text) => {
-    this.setState({ text });
-  };
-
-  onModeChangeSelect = (event) => {
-    this.setState({ mode: event.target.value });
-  };
-
-  onModeChange = (mode) => {
-    this.setState({ mode });
-  };
+    </>
+  );
 }
 
-export default JSONHandler;
+export default React.memo(JSONHandler);

@@ -329,7 +329,6 @@ const data = [
     props: {
       direction: "vertical",
     },
-    dd: true,
     children: ["WtXcPGt9CX", "RclUrYLPJU", "-4I1aDQD69", "bKkdwABO0n"],
   },
   {
@@ -399,14 +398,14 @@ const data = [
                     children: [
                       {
                         type: "Typography.Text",
-                        id: "Comp-RRRR",
+                        id: "8DHjnFnbsr",
                         content: ({ tag }) => `${tag}`,
                       },
                     ],
                   },
                   {
                     type: "Typography.Text",
-                    id: "Comp-xxxx",
+                    id: "8AHjSFnbsr",
                     content: ({ description }) => `${description}`,
                   },
                 ],

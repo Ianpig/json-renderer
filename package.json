@@ -20,6 +20,7 @@
     "craco-less": "^2.0.0",
     "jsoneditor": "^9.7.3",
     "jsoneditor-react": "^3.1.2",
+    "jsonfn": "^0.31.0",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dnd": "^15.1.1",

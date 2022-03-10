@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import JSONEditorReact from "./components/JSONEditor/JSONEditor";
 import _ from "lodash";
-import { JSONfn } from "jsonfn";
 
 const schema = {
   title: "Example Schema",
@@ -27,7 +26,13 @@ const schema = {
 const modes = ["tree", "form", "view", "code", "text"];
 
 function JSONHandler({ code, updateCode, mode, updateMode, disableSelect }) {
-  const [text, setText] = useState(JSONfn.stringify(code, true, 2));
+  const [text, setText] = useState(
+    JSON.stringify(code, function (key, value) {
+      return typeof value === "function" ? value.toString() : value;
+    }, 2)
+  );
+
+  console.log(`text`, text);
 
   const onModeChange = (mode) => {
     updateMode(mode);
@@ -35,7 +40,18 @@ function JSONHandler({ code, updateCode, mode, updateMode, disableSelect }) {
 
   const handleUpdateText = (code) => {
     disableSelect.current = true;
-    _.debounce(updateCode(JSON.parse(code)), 1000);
+    _.debounce(
+      updateCode(
+        JSON.parse(code, function (key, value) {
+          if (typeof value != "string") return value;
+          return value.substring(0, 8) === "function"
+            ? // eslint-disable-next-line no-eval
+              eval("(" + value + ")")
+            : value;
+        })
+      ),
+      1000
+    );
 
     setText(code);
   };

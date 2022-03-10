@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import SplitPane, { Pane } from "react-split-pane";
 import styled from "styled-components";
 import { Typography } from "antd";
-import { JSONfn } from "jsonfn";
 
 import { Button, Switch } from "antd";
 import data from "./data";
@@ -127,8 +126,15 @@ const App = () => {
   const downloadFile = async () => {
     // is an object and I wrote it to file as
     // json
+    console.log(buildTree);
     const fileName = "file";
-    const json = JSONfn.stringify(buildTree, true, 2);
+    const json = JSON.stringify(
+      buildTree,
+      function (key, value) {
+        return typeof value === "function" ? value.toString() : value;
+      },
+      2
+    );
     const blob = new Blob([json], { type: "application/json" });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -166,9 +172,9 @@ const App = () => {
         </div>
       </Pane>
       <Pane initialSize="60%" minSize="10%">
-        <div className="App">
+        {/* <div className="App">
           <Dashboard data={buildTree} onSelectEdit={handleSelectEditItem} />
-        </div>
+        </div> */}
       </Pane>
     </SplitPane>
   );

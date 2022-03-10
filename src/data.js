@@ -399,14 +399,18 @@ const data = [
                       {
                         type: "Typography.Text",
                         id: "8DHjnFnbsr",
-                        content: ({ tag }) => `${tag}`,
+                        content: function ({ tag }) {
+                          return `${tag}`;
+                        },
                       },
                     ],
                   },
                   {
                     type: "Typography.Text",
                     id: "8AHjSFnbsr",
-                    content: ({ description }) => `${description}`,
+                    content: function ({ description }) {
+                      return `${description}111`;
+                    },
                   },
                 ],
               },
@@ -512,7 +516,9 @@ const data = [
       label: {
         type: "inner",
         offset: "-50%",
-        content: ({ percent }) => `${(percent * 100).toFixed(0)}%`,
+        content: function ({ percent }) {
+          return `${(percent * 100).toFixed(0)}%`;
+        },
         style: {
           fill: "#fff",
           fontSize: 14,
@@ -743,8 +749,9 @@ const data = [
       client: 40,
       revenue: `2,338`,
     },
-    content: ({ client, revenue }) =>
-      `An increase in ${client} clients becoming Loyal customers, with an estimated revenue gain of $${revenue} (`,
+    content: function ({ client, revenue }) {
+      return `An increase in ${client} 1 clients becoming Loyal customers, with an estimated revenue gain of $${revenue} (`;
+    },
   },
   {
     type: "Typography.Text",
@@ -763,8 +770,9 @@ const data = [
       client: 430,
       revenue: `234,338`,
     },
-    content: ({ client, revenue }) =>
-      `An increase in ${client} clients becoming Sleepers, with an estimated revenue loss of $${revenue} (`,
+    content: function ({ client, revenue }) {
+      return `An increase in ${client} clients becoming Sleepers, with an estimated revenue loss of $${revenue} (`;
+    },
   },
   {
     type: "Typography.Text",

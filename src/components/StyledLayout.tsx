@@ -16,7 +16,8 @@ const StyledLayout: React.FC<{
     media?: any;
   };
   onSelectEdit: any;
-}> = ({ config, onSelectEdit }) => {
+  injectStyles;
+}> = ({ config, onSelectEdit, injectStyles }) => {
   const RenderComp = renders(config.type);
   const media = config.media || {};
 
@@ -67,6 +68,7 @@ const StyledLayout: React.FC<{
         onSelectEdit(config);
       },
       ...config.props,
+      style: { ...config?.props?.style, ...injectStyles },
     },
     config.children &&
       config.children

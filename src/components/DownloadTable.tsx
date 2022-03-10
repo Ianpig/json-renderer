@@ -28,12 +28,11 @@ const DownloadTable: React.FC<{
     isDownload?: boolean;
   };
   onSelectEdit: any;
-}> = ({ config, onSelectEdit }) => {
+}> = ({ config, onSelectEdit, injectStyles }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const RenderComp = renders(config.type);
 
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
     setSelectedRowKeys(selectedRowKeys);
   };
 
@@ -82,6 +81,7 @@ const DownloadTable: React.FC<{
           </a>
         </Dropdown>
       }
+      style={{ ...config?.props?.style, ...injectStyles }}
     >
       {config.content
         ? typeof config.content === "function"

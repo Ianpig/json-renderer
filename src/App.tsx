@@ -17,31 +17,20 @@ const TitleWrapper = styled.div`
   padding-bottom: 8px;
 `;
 
-const buildLinklist = (mock, children, rowData) => {
-  if (children && Array.isArray(children)) {
-    mock.children = [];
-    return {
-      ...mock,
-      children: children.map((id) => {
-        const selectItem =
-          rowData.find((item: { id: any }) => item.id === id) || {};
-        const { children: childrens, ...rest } = selectItem;
-        return buildLinklist({ ...rest }, childrens, rowData);
-      }),
-    };
-  }
-  return { ...mock };
-};
-
 const App = () => {
   const [lockSelected, setLockSelected] = useState(false);
   const [mode, setMode] = useState("code");
-  const [code, setCode] = useState(data);
+  const [code, setCode] = useState(
+    JSON.parse(JSON.stringify(data), function (key, value) {
+      if (typeof value != "string") return value;
+      return value.substring(0, 8) === "function"
+        ? // eslint-disable-next-line no-eval
+          eval("(" + value + ")")
+        : value;
+    })
+  );
   const disableSelect = useRef(false);
 
-  let { children, ...restProps } =
-    (code && code.find((item) => item.root === true)) || {};
-  const buildTree = buildLinklist(restProps, children, code);
   const [selectEdit, setSelectEdit] = useState("");
 
   const findItemUpdate = (
@@ -55,98 +44,90 @@ const App = () => {
     };
   };
 
-  const recursiveUpdateDown = (
-    mockCode: any[],
-    value: { children: { [x: string]: any; id?: string; children?: any }[] }
-  ) => {
-    const root = mockCode.find(({ id }) => id === value.id);
-    // use for delete item
-    if (root?.children) {
-      root?.children.forEach((id: string, index: number) => {
-        const findNode =
-          value?.children &&
-          value?.children.find((element) => element.id === id);
-        if (!findNode) {
-          root.children.splice(index, 1);
-        }
-      });
-    }
+  // const recursiveUpdateDown = (
+  //   mockCode: any[],
+  //   value: { children: { [x: string]: any; id?: string; children?: any }[] }
+  // ) => {
+  //   const root = mockCode.find(({ id }) => id === value.id);
+  //   // use for delete item
+  //   if (root?.children) {
+  //     root?.children.forEach((id: string, index: number) => {
+  //       const findNode =
+  //         value?.children &&
+  //         value?.children.find((element) => element.id === id);
+  //       if (!findNode) {
+  //         root.children.splice(index, 1);
+  //       }
+  //     });
+  //   }
 
-    // use for add item
-    if (value?.children) {
-      value?.children.forEach((element, index) => {
-        const findNode =
-          root?.children && root?.children.find((id) => element.id === id);
-        if (!findNode) {
-          if (root?.children) {
-            root.children.splice(index, 0, element.id);
-          } else {
-            root.children[0] = element.id;
-          }
-          mockCode.push(element);
-        }
-      });
-    }
+  //   // use for add item
+  //   if (value?.children) {
+  //     value?.children.forEach((element, index) => {
+  //       const findNode =
+  //         root?.children && root?.children.find((id) => element.id === id);
+  //       if (!findNode) {
+  //         if (root?.children) {
+  //           root.children.splice(index, 0, element.id);
+  //         } else {
+  //           root.children[0] = element.id;
+  //         }
+  //         mockCode.push(element);
+  //       }
+  //     });
+  //   }
 
-    if (value?.children) {
-      // use for remove node
-      value.children.forEach(
-        (element: { [x: string]: any; id?: any; children?: any }) => {
-          findItemUpdate(mockCode, element);
-          recursiveUpdateDown(mockCode, element);
-        }
-      );
-    }
+  //   if (value?.children) {
+  //     // use for remove node
+  //     value.children.forEach(
+  //       (element: { [x: string]: any; id?: any; children?: any }) => {
+  //         findItemUpdate(mockCode, element);
+  //         recursiveUpdateDown(mockCode, element);
+  //       }
+  //     );
+  //   }
+  // };
+
+  const handleSetEditUpdate = (codeText) => {
+    const formatValue = JSON.parse(codeText, function (key, value) {
+      if (typeof value != "string") return value;
+      return value.substring(0, 8) === "function"
+        ? // eslint-disable-next-line no-eval
+          eval("(" + value + ")")
+        : value;
+    });
+    setCode(formatValue);
   };
 
-  const handleSetEditUpdate = useCallback(
-    (value) => {
-      if (selectEdit) {
-        setSelectEdit(value);
-      }
-
-      setCode((prevCode) => {
-        const mockCode = [...prevCode];
-        findItemUpdate(mockCode, value);
-        recursiveUpdateDown(mockCode, value);
-        return mockCode;
-      });
-      disableSelect.current = false;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleSelectEditItem = (node) => {
-    if (!lockSelected && !disableSelect.current) {
-      setSelectEdit(node);
-    }
+    // if (!lockSelected && !disableSelect.current) {
+    //   setSelectEdit(node);
+    // }
   };
 
   const downloadFile = async () => {
     // is an object and I wrote it to file as
     // json
-    console.log(buildTree);
     const fileName = "file";
     const json = JSON.stringify(
-      buildTree,
+      code,
       function (key, value) {
         return typeof value === "function" ? value.toString() : value;
       },
       2
     );
-    const blob = new Blob([json], { type: "application/json" });
+    const blob = new Blob([json], { type: "text/plain;charset=utf-8;" });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = href;
-    link.download = fileName + ".json";
+    link.download = fileName + ".txt";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   useEffect(() => {
-    setSelectEdit(buildTree);
+    setSelectEdit(data);
   }, []);
 
   return (
@@ -162,8 +143,7 @@ const App = () => {
             </div>
           </TitleWrapper>
           <JSONHandler
-            key={selectEdit?.id}
-            code={selectEdit}
+            code={code}
             updateCode={handleSetEditUpdate}
             mode={mode}
             updateMode={setMode}
@@ -172,9 +152,9 @@ const App = () => {
         </div>
       </Pane>
       <Pane initialSize="60%" minSize="10%">
-        {/* <div className="App">
-          <Dashboard data={buildTree} onSelectEdit={handleSelectEditItem} />
-        </div> */}
+        <div className="App">
+          <Dashboard data={code} onSelectEdit={handleSelectEditItem} />
+        </div>
       </Pane>
     </SplitPane>
   );

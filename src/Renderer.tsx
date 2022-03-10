@@ -1,8 +1,9 @@
 import React from "react";
-// import { useDrag } from "react-dnd";
 import renders from "./Render";
 import DownloadTable from "./components/DownloadTable";
 import StyledLayout from "./components/StyledLayout";
+
+import colors from "./styles/color";
 
 const Renderer = (config: {
   type: any;
@@ -16,40 +17,44 @@ const Renderer = (config: {
   media?: any;
   onSelectEdit: any;
 }) => {
+  let injectStyles = {};
   const { onSelectEdit } = config;
   let props = config.props;
+  if (props?.style) {
+    Object.keys(props.style).forEach((key) => {
+      const getColor = colors[props.style[key]];
+      if (getColor) {
+        injectStyles = {
+          ...injectStyles,
+          [key]: getColor,
+        };
+      }
+    });
+  }
   if (config.isDownload) {
     if (config.type === "Card") {
       return (
-        <DownloadTable config={config} onSelectEdit={onSelectEdit} />
+        <DownloadTable
+          config={config}
+          injectStyles={injectStyles}
+          onSelectEdit={onSelectEdit}
+        />
       );
     }
   }
   if (config.type === "Layout" && config.media) {
-    return <StyledLayout config={config} onSelectEdit={onSelectEdit} />;
+    return (
+      <StyledLayout
+        config={config}
+        injectStyles={injectStyles}
+        onSelectEdit={onSelectEdit}
+      />
+    );
   }
   let injectProps = {};
   if (config.isColumn) {
     injectProps = { ...injectProps, ...config };
   }
-  // const [{ isOver, canDrop }, drag] = useDrag(
-  //   () => ({
-  //     // accept: "Box",
-  //     type: "Box",
-  //     item: { name: "123" },
-  //     end: (item, monitor) => {
-  //       const dropResult = monitor.getDropResult();
-  //       if (item && dropResult) {
-  //         alert(`You dropped ${item.name} into ${dropResult.name}!`);
-  //       }
-  //     },
-  //     collect: (monitor) => ({
-  //       isDragging: monitor.isDragging(),
-  //       handlerId: monitor.getHandlerId(),
-  //     }),
-  //   }),
-  //   []
-  // );
 
   const RenderComp = renders(config.type);
   if (config.type === "Row" || config.type === "Col") {
@@ -62,7 +67,7 @@ const Renderer = (config: {
           e.stopPropagation();
           onSelectEdit(config);
         },
-        // ref: drag,
+        style: { ...props?.style, ...injectStyles },
       },
       config.content ||
         (config.children &&
@@ -77,50 +82,55 @@ const Renderer = (config: {
   }
   if (typeof RenderComp !== "undefined") {
     if (config.type === "Table") {
-      config.props.columns = [...config.props.columns].map((item) => {
-        const { render, ...rest } = item;
-        if (typeof render === "function") {
-          return { ...rest, render };
-        }
-        if (typeof render === "object") {
-          return {
-            ...rest,
-            render: (
-              _: any,
-              record: JSX.IntrinsicAttributes & {
-                type: any;
-                id?: string | undefined;
-                props: any;
-                children: any;
-                content?: any;
-                isColumn?: boolean | undefined;
-                isDownload?: boolean | undefined;
-                variable?: any;
-                media?: any;
-                onSelectEdit: any;
-              }
-            ) => (
-              <Renderer
-                isColumn
-                {...injectProps}
-                {...record}
-                {...render}
-                onSelectEdit={onSelectEdit}
-              />
-            ),
-          };
-        }
-        return { ...item, isColumn: true };
-      });
+      injectProps = {
+        ...injectProps,
+        columns: [...config.props.columns].map((item) => {
+          const { render, ...rest } = item;
+          if (typeof render === "function") {
+            return { ...rest, render };
+          }
+          if (typeof render === "object") {
+            return {
+              ...rest,
+              render: (
+                _: any,
+                record: JSX.IntrinsicAttributes & {
+                  type: any;
+                  id?: string | undefined;
+                  props: any;
+                  children: any;
+                  content?: any;
+                  isColumn?: boolean | undefined;
+                  isDownload?: boolean | undefined;
+                  variable?: any;
+                  media?: any;
+                  onSelectEdit: any;
+                }
+              ) => (
+                <Renderer
+                  isColumn
+                  {...injectProps}
+                  {...record}
+                  {...render}
+                  onSelectEdit={onSelectEdit}
+                />
+              ),
+            };
+          }
+          return { ...item, isColumn: true };
+        }),
+      };
     }
     let variable = config.variable || {};
     return (
       <RenderComp
         {...props}
+        {...injectProps}
         onClick={(e: { stopPropagation: () => void }) => {
           e.stopPropagation();
           onSelectEdit(config);
         }}
+        style={{ ...props?.style, ...injectStyles }}
       >
         {config.content
           ? typeof config.content === "function"

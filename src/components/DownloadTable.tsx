@@ -27,22 +27,11 @@ const DownloadTable: React.FC<{
     isColumn?: boolean;
     isDownload?: boolean;
   };
-  onSelectEdit: any;
-}> = ({ config, onSelectEdit, injectStyles }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+}> = ({ config, injectStyles }) => {
   const RenderComp = renders(config.type);
 
-  const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
   const handleDownload = () => {
-    console.log("selectedRowKeys selected: ", selectedRowKeys);
+    console.log("selectedRowKeys selected: ");
   };
 
   function findChildren(element: {
@@ -54,12 +43,7 @@ const DownloadTable: React.FC<{
     isColumn?: boolean | undefined;
     isDownload?: boolean | undefined;
   }) {
-    if (element.type === "Table") {
-      element.props = {
-        ...element.props,
-        rowSelection: { type: "checkbox", ...rowSelection },
-      };
-    } else if (element.children && element.children.length) {
+    if (element.children && element.children.length) {
       element = element.children.forEach((elem: any) => {
         findChildren(elem);
       });
@@ -70,10 +54,6 @@ const DownloadTable: React.FC<{
   return (
     <RenderComp
       {...config.props}
-      onClick={(e: { stopPropagation: () => void }) => {
-        e.stopPropagation();
-        onSelectEdit(config);
-      }}
       extra={
         <Dropdown overlay={menu({ onDownload: handleDownload })}>
           <a className="ant-dropdown-link" onClick={handleDownload}>
@@ -93,7 +73,7 @@ const DownloadTable: React.FC<{
             .sort(
               (a: { order: number }, b: { order: number }) => a.order - b.order
             )
-            .map((c: any) => <Renderer {...c} onSelectEdit={onSelectEdit} />)}
+            .map((c: any) => <Renderer {...c} />)}
     </RenderComp>
   );
 };

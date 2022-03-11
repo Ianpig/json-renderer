@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import SplitPane, { Pane } from "react-split-pane";
 import styled from "styled-components";
 import { Typography } from "antd";
@@ -6,6 +6,8 @@ import { Typography } from "antd";
 import { Button, Switch } from "antd";
 import data from "./data";
 import "./App.less";
+
+import ErrorBoundary from "./ErrorBoundary";
 
 import Dashboard from "./Dashboard";
 import JSONHandler from "./JSONHandler";
@@ -29,89 +31,26 @@ const App = () => {
         : value;
     })
   );
-  const disableSelect = useRef(false);
 
-  const [selectEdit, setSelectEdit] = useState("");
-
-  const findItemUpdate = (
-    mockCode: any[],
-    value: { [x: string]: any; id?: any; children?: any }
-  ) => {
-    const { children, ...restValue } = value;
-    mockCode[mockCode.findIndex((el) => el.id === value.id)] = {
-      ...mockCode[mockCode.findIndex((el) => el.id === value.id)],
-      ...restValue,
-    };
-  };
-
-  // const recursiveUpdateDown = (
-  //   mockCode: any[],
-  //   value: { children: { [x: string]: any; id?: string; children?: any }[] }
-  // ) => {
-  //   const root = mockCode.find(({ id }) => id === value.id);
-  //   // use for delete item
-  //   if (root?.children) {
-  //     root?.children.forEach((id: string, index: number) => {
-  //       const findNode =
-  //         value?.children &&
-  //         value?.children.find((element) => element.id === id);
-  //       if (!findNode) {
-  //         root.children.splice(index, 1);
-  //       }
-  //     });
-  //   }
-
-  //   // use for add item
-  //   if (value?.children) {
-  //     value?.children.forEach((element, index) => {
-  //       const findNode =
-  //         root?.children && root?.children.find((id) => element.id === id);
-  //       if (!findNode) {
-  //         if (root?.children) {
-  //           root.children.splice(index, 0, element.id);
-  //         } else {
-  //           root.children[0] = element.id;
-  //         }
-  //         mockCode.push(element);
-  //       }
-  //     });
-  //   }
-
-  //   if (value?.children) {
-  //     // use for remove node
-  //     value.children.forEach(
-  //       (element: { [x: string]: any; id?: any; children?: any }) => {
-  //         findItemUpdate(mockCode, element);
-  //         recursiveUpdateDown(mockCode, element);
-  //       }
-  //     );
-  //   }
-  // };
-
-  const handleSetEditUpdate = (codeText) => {
+  const handleSetEditUpdate = (codeText: string) => {
     const formatValue = JSON.parse(codeText, function (key, value) {
       if (typeof value != "string") return value;
-      return value.substring(0, 8) === "function"
+      return value.substring(0, 8) === "function" || value.indexOf("=>") > -1
         ? // eslint-disable-next-line no-eval
-          eval("(" + value + ")")
+          typeof eval("(" + value + ")") === "function"
+          ? // eslint-disable-next-line no-eval
+            eval("(" + value + ")")
+          : value
         : value;
     });
     setCode(formatValue);
   };
 
-  const handleSelectEditItem = (node) => {
-    // if (!lockSelected && !disableSelect.current) {
-    //   setSelectEdit(node);
-    // }
-  };
-
   const downloadFile = async () => {
-    // is an object and I wrote it to file as
-    // json
     const fileName = "file";
     const json = JSON.stringify(
       code,
-      function (key, value) {
+      function (_, value) {
         return typeof value === "function" ? value.toString() : value;
       },
       2
@@ -125,10 +64,6 @@ const App = () => {
     link.click();
     document.body.removeChild(link);
   };
-
-  useEffect(() => {
-    setSelectEdit(data);
-  }, []);
 
   return (
     <SplitPane split="vertical" minSize={`50%`} defaultSize={`50%`}>
@@ -147,13 +82,14 @@ const App = () => {
             updateCode={handleSetEditUpdate}
             mode={mode}
             updateMode={setMode}
-            disableSelect={disableSelect}
           />
         </div>
       </Pane>
       <Pane initialSize="60%" minSize="10%">
         <div className="App">
-          <Dashboard data={code} onSelectEdit={handleSelectEditItem} />
+          <ErrorBoundary>
+            <Dashboard data={code} />
+          </ErrorBoundary>
         </div>
       </Pane>
     </SplitPane>

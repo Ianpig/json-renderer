@@ -15,10 +15,8 @@ const Renderer = (config: {
   isDownload?: boolean;
   variable?: any;
   media?: any;
-  onSelectEdit: any;
 }) => {
   let injectStyles = {};
-  const { onSelectEdit } = config;
   let props = config.props;
   if (props?.style) {
     Object.keys(props.style).forEach((key) => {
@@ -33,23 +31,11 @@ const Renderer = (config: {
   }
   if (config.isDownload) {
     if (config.type === "Card") {
-      return (
-        <DownloadTable
-          config={config}
-          injectStyles={injectStyles}
-          onSelectEdit={onSelectEdit}
-        />
-      );
+      return <DownloadTable config={config} injectStyles={injectStyles} />;
     }
   }
   if (config.type === "Layout" && config.media) {
-    return (
-      <StyledLayout
-        config={config}
-        injectStyles={injectStyles}
-        onSelectEdit={onSelectEdit}
-      />
-    );
+    return <StyledLayout config={config} injectStyles={injectStyles} />;
   }
   let injectProps = {};
   if (config.isColumn) {
@@ -63,10 +49,6 @@ const Renderer = (config: {
       {
         ...config.props,
         key: config.id,
-        onClick: (e) => {
-          e.stopPropagation();
-          onSelectEdit(config);
-        },
         style: { ...props?.style, ...injectStyles },
       },
       config.content ||
@@ -75,9 +57,7 @@ const Renderer = (config: {
             .sort(
               (a: { order: number }, b: { order: number }) => a.order - b.order
             )
-            .map((c: any) => (
-              <Renderer {...injectProps} {...c} onSelectEdit={onSelectEdit} />
-            )))
+            .map((c: any) => <Renderer {...injectProps} {...c} />))
     );
   }
   if (typeof RenderComp !== "undefined") {
@@ -104,16 +84,9 @@ const Renderer = (config: {
                   isDownload?: boolean | undefined;
                   variable?: any;
                   media?: any;
-                  onSelectEdit: any;
                 }
               ) => (
-                <Renderer
-                  isColumn
-                  {...injectProps}
-                  {...record}
-                  {...render}
-                  onSelectEdit={onSelectEdit}
-                />
+                <Renderer isColumn {...injectProps} {...record} {...render} />
               ),
             };
           }
@@ -126,10 +99,6 @@ const Renderer = (config: {
       <RenderComp
         {...props}
         {...injectProps}
-        onClick={(e: { stopPropagation: () => void }) => {
-          e.stopPropagation();
-          onSelectEdit(config);
-        }}
         style={{ ...props?.style, ...injectStyles }}
       >
         {config.content
@@ -142,9 +111,7 @@ const Renderer = (config: {
                 (a: { order: number }, b: { order: number }) =>
                   a.order - b.order
               )
-              .map((c: any) => (
-                <Renderer {...injectProps} {...c} onSelectEdit={onSelectEdit} />
-              ))}
+              .map((c: any) => <Renderer {...injectProps} {...c} />)}
       </RenderComp>
     );
   }
